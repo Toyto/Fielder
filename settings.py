@@ -1,0 +1,1 @@
+PATH_TO_GJSON_FILE = '/mnt/fr-subset.geojsons'

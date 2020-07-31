@@ -6,3 +6,5 @@ To fill up the DB:
 
 In psql shell copypaste the commands from init.sql file.
 
+Copy geojson file into docker container(assuming that file is in /tmp dir):
+docker cp /tmp/fr-subset.geojsons  [container name(could be fetched from `docker ps`)]:/mnt
