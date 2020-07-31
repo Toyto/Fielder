@@ -1,0 +1,30 @@
+version: '2.0'
+services:
+  db:
+    image: mdillon/postgis:10
+    ports:
+      - "5432:5432"
+    environment:
+      # Used to create the DB when starting initially
+      POSTGRES_DB: 'fields'
+      POSTGRES_USER: 'postgres'
+      # Used by psql
+      PGUSER: 'postgres'
+      PGHOST: 'localhost'
+      PGDATASE: 'fields'
+  app:
+    build: .
+    ports:
+      - 5005:5000
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=development
+    volumes:
+      - .:/mnt
+    working_dir: /mnt
+    command:
+      - flask
+      - run
+      - "--host=0.0.0.0"
+    depends_on:
+      - db
