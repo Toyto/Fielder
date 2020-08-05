@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from utils import StatExtractor
+from utils import StatExtractor, ValuesExtractor
 
 
 app = Flask(__name__)
