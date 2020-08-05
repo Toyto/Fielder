@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from utils import ValuesExtractor
+from utils import StatExtractor
 
 
 app = Flask(__name__)
@@ -11,4 +11,20 @@ def get_equidistant_point():
     distance = request.args.get('distance')
     extractor = ValuesExtractor()
     result = extractor.equidistant_point(coords, distance)
+    return jsonify(result)
+
+
+@app.route('/rectangle')
+def get_rectangle():
+    coords = request.args.get('coordinates').replace(' ', ',')
+    extractor = ValuesExtractor()
+    result = extractor.rectangle(coords)
+    return jsonify(result)
+
+
+@app.route('/region-stat')
+def region_stat():
+    region = request.args.get('region')
+    extractor = StatExtractor()
+    result = extractor.get_region(region)
     return jsonify(result)
