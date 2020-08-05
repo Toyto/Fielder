@@ -1,3 +1,5 @@
+The examples are in the Endpoint specification.pdf file.
+
 To start the app:
 `docker-compose up`
 

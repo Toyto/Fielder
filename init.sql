@@ -6,6 +6,7 @@ CREATE TABLE fields_field ("id" serial NOT NULL PRIMARY KEY,"crop" varchar(255),
 SELECT AddGeometryColumn ('fields_field', 'geom', 4326, 'MultiPolygon', 2);
 SELECT AddGeometryColumn ('fields_field', 'geom_p', 4326, 'Polygon', 2);
 
+# Run these commands after filling up the table.
 CREATE INDEX "field_crop" on "fields_field" ("crop");
 CREATE INDEX "field_region" on "fields_field" ("region");
 CREATE INDEX "field_geom" on "fields_field" USING GIST ("geom");
