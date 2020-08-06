@@ -9,16 +9,18 @@ app = Flask(__name__)
 def get_equidistant_point():
     coords = request.args.get('coordinates').replace(' ', ',')
     distance = request.args.get('distance')
+    crops = request.args.get('crops', '')
     extractor = ValuesExtractor()
-    result = extractor.equidistant_point(coords, distance)
+    result = extractor.equidistant_point(coords, distance, crops=crops)
     return jsonify(result)
 
 
 @app.route('/rectangle')
 def get_rectangle():
     coords = request.args.get('coordinates').replace(' ', ',')
+    crops = request.args.get('crops', '')
     extractor = ValuesExtractor()
-    result = extractor.rectangle(coords)
+    result = extractor.rectangle(coords, crops=crops)
     return jsonify(result)
 
 

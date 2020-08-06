@@ -30,25 +30,46 @@ class ValuesExtractor():
 
         return data
 
-    def equidistant_point(self, coords, distance):
-        sql = """
-            SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
-            ST_Intersects(
-                geom::geography, 
-                ST_Buffer(ST_MakePoint(%s)::geography, 
-                %s, 'quad_segs=8')
-            ) IS True LIMIT %s;
-        """ % (coords, distance, settings.MAX_RES_SIZE)
+    def equidistant_point(self, coords, distance, crops=None):
+        if crops:
+            crops = crops.split(' ')
+            sql = """
+                SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
+                ST_Intersects(
+                    geom::geography, 
+                    ST_Buffer(ST_MakePoint(%s)::geography, 
+                    %s, 'quad_segs=8')
+                ) IS True %s LIMIT %s;
+            """ % (coords, distance, f"AND crop IN {*crops,}", settings.MAX_RES_SIZE)
+        else:
+            sql = """
+                SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
+                ST_Intersects(
+                    geom::geography, 
+                    ST_Buffer(ST_MakePoint(%s)::geography, 
+                    %s, 'quad_segs=8')
+                ) IS True LIMIT %s;
+            """ % (coords, distance, settings.MAX_RES_SIZE)
         return self._run_sql(sql)
 
-    def rectangle(self, coords):
-        sql = """
-            SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
-            ST_Intersects(
-                geom::geography, 
-                ST_MakeEnvelope(%s, 4326)::geography
-            ) IS True LIMIT %s;
-        """ % (coords, settings.MAX_RES_SIZE)
+    def rectangle(self, coords, crops=None):
+        if crops:
+            crops = crops.split(' ')
+            sql = """
+                SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
+                ST_Intersects(
+                    geom::geography, 
+                    ST_MakeEnvelope(%s, 4326)::geography
+                ) IS True %s LIMIT %s;
+            """ % (coords, f"AND crop IN {*crops,}", settings.MAX_RES_SIZE)
+        else:
+            sql = """
+                SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
+                ST_Intersects(
+                    geom::geography, 
+                    ST_MakeEnvelope(%s, 4326)::geography
+                ) IS True LIMIT %s;
+            """ % (coords, settings.MAX_RES_SIZE)
         return self._run_sql(sql)
 
 
