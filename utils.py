@@ -52,6 +52,7 @@ class ValuesExtractor():
                 ST_MakeEnvelope(%s, 4326)::geography
             ) IS True %s LIMIT %s;
         """ % (coords, crops_string if crops else '', settings.MAX_RES_SIZE)
+        
         return self._run_sql(sql)
 
     def geometry_intersection(self, geometry, crops=None):
@@ -102,4 +103,5 @@ class StatExtractor():
             SELECT crop, AVG(productivity::numeric), SUM(productivity::numeric), SUM(area_ha), region FROM fields_field WHERE 
             region = '%s' GROUP BY region, crop;
         """ % (region)
+        
         return self._run_sql(sql)
