@@ -72,6 +72,30 @@ class ValuesExtractor():
             """ % (coords, settings.MAX_RES_SIZE)
         return self._run_sql(sql)
 
+    def geometry_intersection(self, geometry, crops=None):
+        if crops:
+            crops = crops.split(' ')
+            if len(crops) > 1:
+                crops_string = f"AND crop IN {*crops,}"
+            else:
+                crops_string = f"AND crop IN ('{crops[0]}')"
+            sql = """
+                SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
+                ST_Intersects(
+                    geom::geography, 
+                    ST_GeomFromGeoJSON('%s'::json)::geography
+                ) IS True %s LIMIT %s;
+            """ % (geometry, crops_string, settings.MAX_RES_SIZE)
+        else:
+            sql = """
+                SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
+                ST_Intersects(
+                    geom::geography, 
+                    ST_GeomFromGeoJSON('%s'::json)::geography
+                ) IS True LIMIT %s;
+            """ % (geometry, settings.MAX_RES_SIZE)
+        return self._run_sql(sql)
+
 
 class StatExtractor():
 
