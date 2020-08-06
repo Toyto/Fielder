@@ -31,65 +31,39 @@ class ValuesExtractor():
         return data
 
     def equidistant_point(self, coords, distance, crops=None):
-        if crops:
-            crops_string = self._create_crop_filter(crops)
-            sql = """
-                SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
-                ST_Intersects(
-                    geom::geography, 
-                    ST_Buffer(ST_MakePoint(%s)::geography, 
-                    %s, 'quad_segs=8')
-                ) IS True %s LIMIT %s;
-            """ % (coords, distance, crops_string, settings.MAX_RES_SIZE)
-        else:
-            sql = """
-                SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
-                ST_Intersects(
-                    geom::geography, 
-                    ST_Buffer(ST_MakePoint(%s)::geography, 
-                    %s, 'quad_segs=8')
-                ) IS True LIMIT %s;
-            """ % (coords, distance, settings.MAX_RES_SIZE)
+        crops_string = self._create_crop_filter(crops)
+        sql = """
+            SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
+            ST_Intersects(
+                geom::geography, 
+                ST_Buffer(ST_MakePoint(%s)::geography, 
+                %s, 'quad_segs=8')
+            ) IS True %s LIMIT %s;
+        """ % (coords, distance, crops_string if crops else '', settings.MAX_RES_SIZE)
+    
         return self._run_sql(sql)
 
     def rectangle(self, coords, crops=None):
-        if crops:
-            crops_string = self._create_crop_filter(crops)
-            sql = """
-                SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
-                ST_Intersects(
-                    geom::geography, 
-                    ST_MakeEnvelope(%s, 4326)::geography
-                ) IS True %s LIMIT %s;
-            """ % (coords, crops_string, settings.MAX_RES_SIZE)
-        else:
-            sql = """
-                SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
-                ST_Intersects(
-                    geom::geography, 
-                    ST_MakeEnvelope(%s, 4326)::geography
-                ) IS True LIMIT %s;
-            """ % (coords, settings.MAX_RES_SIZE)
+        crops_string = self._create_crop_filter(crops)
+        sql = """
+            SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
+            ST_Intersects(
+                geom::geography, 
+                ST_MakeEnvelope(%s, 4326)::geography
+            ) IS True %s LIMIT %s;
+        """ % (coords, crops_string if crops else '', settings.MAX_RES_SIZE)
         return self._run_sql(sql)
 
     def geometry_intersection(self, geometry, crops=None):
-        if crops:
-            crops_string = self._create_crop_filter(crops)
-            sql = """
-                SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
-                ST_Intersects(
-                    geom::geography, 
-                    ST_GeomFromGeoJSON('%s'::json)::geography
-                ) IS True %s LIMIT %s;
-            """ % (geometry, crops_string, settings.MAX_RES_SIZE)
-        else:
-            sql = """
-                SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
-                ST_Intersects(
-                    geom::geography, 
-                    ST_GeomFromGeoJSON('%s'::json)::geography
-                ) IS True LIMIT %s;
-            """ % (geometry, settings.MAX_RES_SIZE)
+        crops_string = self._create_crop_filter(crops)
+        sql = """
+            SELECT id, crop, productivity, area_ha, region, ST_AsGeoJSON(geom) FROM fields_field WHERE 
+            ST_Intersects(
+                geom::geography, 
+                ST_GeomFromGeoJSON('%s'::json)::geography
+            ) IS True %s LIMIT %s;
+        """ % (geometry, crops_string if crops else '', settings.MAX_RES_SIZE)
+        
         return self._run_sql(sql)
 
     def _create_crop_filter(self, crops):
