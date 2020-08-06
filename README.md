@@ -13,6 +13,7 @@ To fill up the DB:
 
 
   `docker-compose exec app bash`
+  
   `python importer.py`
   
   Take a cup of coffee, the command will take around 15min.
